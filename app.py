@@ -17,6 +17,9 @@ if 'page' not in st.session_state:
 def go_to_recommendation():
     st.session_state.page = 'recommendation'
 
+def go_to_home():
+    st.session_state.page = 'home'
+
 # Page d'accueil avec connexion
 if st.session_state.page == 'home':
     st.title('Welcome to the Music Recommendation Engine')
@@ -31,6 +34,10 @@ if st.session_state.page == 'home':
 # Page de recommandation
 elif st.session_state.page == 'recommendation':
     st.title('Music Recommendation Engine')
+
+    # Bouton pour retourner à la page d'accueil
+    if st.button('Back to Home'):
+        go_to_home()
 
     # Menu déroulant pour sélectionner plusieurs chansons
     selected_songs = st.multiselect('Select songs you like:', songs_list)
