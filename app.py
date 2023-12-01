@@ -1,30 +1,37 @@
 import streamlit as st
 
-st.title('Hello Everybodyy')
-st.write('Hellooooooooo.')
-
-# Exemple de liste de chansons (remplacez ceci par votre propre liste ou base de données)
+# Exemple de liste de chansons
 songs_list = ['Song 1', 'Song 2', 'Song 3', 'Song 4', 'Song 5']
 
-# Fonction pour générer des recommandations (à implémenter selon votre logique)
+# Fonction pour générer des recommandations
 def generate_recommendations(selected_songs):
-    # Ici, implémentez votre logique pour générer des recommandations
-    # Pour l'instant, cela renvoie simplement une liste de chansons non sélectionnées
+    # Implémentez votre logique ici
     recommended_songs = [song for song in songs_list if song not in selected_songs]
     return recommended_songs[:3]  # Retourne les 3 premières recommandations
 
-# Interface utilisateur
-st.title('Music Recommendation Engine')
+# Gestion de l'état de la page
+if 'page' not in st.session_state:
+    st.session_state.page = 'home'
 
-# Menu déroulant pour sélectionner plusieurs chansons
-selected_songs = st.multiselect('Select songs you like:', songs_list)
+# Page d'accueil
+if st.session_state.page == 'home':
+    st.title('HELLOOOOOOOOOOOOOOOOOO AND Welcome to the Music Recommendation Engine')
+    if st.button('Get Started'):
+        st.session_state.page = 'recommendation'
 
-# Bouton pour obtenir des recommandations
-if st.button('Recommend Songs'):
-    if selected_songs:
-        recommendations = generate_recommendations(selected_songs)
-        st.write('Recommended Songs for you:')
-        for song in recommendations:
-            st.write(song)
-    else:
-        st.write('Please select at least one song.')
+# Page de recommandation
+elif st.session_state.page == 'recommendation':
+    st.title('Music Recommendation Engine')
+
+    # Menu déroulant pour sélectionner plusieurs chansons
+    selected_songs = st.multiselect('Select songs you like:', songs_list)
+
+    # Bouton pour obtenir des recommandations
+    if st.button('Recommend Songs'):
+        if selected_songs:
+            recommendations = generate_recommendations(selected_songs)
+            st.write('Recommended Songs for you:')
+            for song in recommendations:
+                st.write(song)
+        else:
+            st.write('Please select at least one song.')
