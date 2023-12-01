@@ -13,13 +13,6 @@ def generate_recommendations(selected_songs):
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
 
-# Fonction pour changer de page
-def go_to_recommendation():
-    st.session_state.page = 'recommendation'
-
-def go_to_home():
-    st.session_state.page = 'home'
-
 # Page d'accueil avec connexion
 if st.session_state.page == 'home':
     st.title('Welcome to the Music Recommendation Engine')
@@ -30,7 +23,7 @@ if st.session_state.page == 'home':
     # Bouton de connexion
     if st.button('Login'):
         if user_id:
-            go_to_recommendation()
+            st.session_state.page = 'recommendation'
         else:
             st.warning('Please enter a valid ID.')
 
@@ -40,7 +33,7 @@ elif st.session_state.page == 'recommendation':
 
     # Bouton pour retourner à la page d'accueil
     if st.button('Back to Home'):
-        go_to_home()
+        st.session_state.page = 'home'
 
     # Menu déroulant pour sélectionner plusieurs chansons
     selected_songs = st.multiselect('Select songs you like:', songs_list)
