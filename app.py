@@ -13,6 +13,10 @@ def generate_recommendations(selected_songs):
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
 
+# Fonction pour changer de page
+def go_to_recommendation():
+    st.session_state.page = 'recommendation'
+
 # Page d'accueil avec connexion
 if st.session_state.page == 'home':
     st.title('Welcome to the Music Recommendation Engine')
@@ -20,12 +24,9 @@ if st.session_state.page == 'home':
     # Champ de saisie pour l'ID de l'utilisateur
     user_id = st.text_input('Enter your ID:', '')
 
-    # Bouton de connexion
-    if st.button('Login'):
-        if user_id:  # Vous pouvez ajouter une logique de vérification ici
-            st.session_state.page = 'recommendation'
-        else:
-            st.error('Please enter a valid ID.')
+    # Bouton de connexion avec callback
+    if user_id:
+        st.button('Login', on_click=go_to_recommendation)
 
 # Page de recommandation
 elif st.session_state.page == 'recommendation':
