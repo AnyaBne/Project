@@ -11,44 +11,35 @@ def generate_recommendations(selected_songs):
 
 # Initialisation de l'état de la page
 if 'page' not in st.session_state:
-    st.session_state.page = 'home'
-
-# Fonction pour changer l'état de la page
-def set_page_state(page):
-    st.session_state.page = page
+    st.session_state['page'] = 'home'
 
 # Page d'accueil avec connexion
-if st.session_state.page == 'home':
+if st.session_state['page'] == 'home':
     st.title('Welcome to the Music Recommendation Engine')
     
     # Champ de saisie pour l'ID de l'utilisateur
     user_id = st.text_input('Enter your ID:', '')
 
     # Bouton de connexion
-    login_button = st.button('Login')
-
-    # Vérification de l'ID et mise à jour de l'état de la page
-    if login_button:
+    if st.button('Login'):
         if user_id:
-            set_page_state('recommendation')
+            st.session_state['page'] = 'recommendation'
         else:
-            st.warning('Please enter a valid ID.')
+            st.error('Please enter a valid ID.')
 
 # Page de recommandation
-elif st.session_state.page == 'recommendation':
+elif st.session_state['page'] == 'recommendation':
     st.title('Music Recommendation Engine')
+
+    # Bouton pour retourner à la page d'accueil
+    if st.button('Back to Home'):
+        st.session_state['page'] = 'home'
 
     # Menu déroulant pour sélectionner plusieurs chansons
     selected_songs = st.multiselect('Select songs you like:', songs_list)
 
     # Bouton pour obtenir des recommandations
-    recommend_button = st.button('Recommend Songs')
-    
-    # Bouton pour retourner à la page d'accueil
-    back_button = st.button('Back to Home')
-
-    # Affichage des recommandations si demandé
-    if recommend_button:
+    if st.button('Recommend Songs'):
         if selected_songs:
             recommendations = generate_recommendations(selected_songs)
             st.subheader('Recommended Songs for you:')
@@ -56,7 +47,3 @@ elif st.session_state.page == 'recommendation':
                 st.write(song)
         else:
             st.warning('Please select at least one song.')
-
-    # Changement de page si le bouton "Back to Home" est pressé
-    if back_button:
-        set_page_state('home')
