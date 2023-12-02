@@ -17,16 +17,16 @@ def generate_recommendations(selected_songs):
 # Initialisation des variables d'état
 if 'page' not in st.session_state:
     st.session_state['page'] = 'home'
-if 'user_id' not in st.session_state:
-    st.session_state['user_id'] = ''
+if 'login_attempted' not in st.session_state:
+    st.session_state['login_attempted'] = False
 
 # Page d'accueil
 st.title('Welcome to the Music Recommendation Engine')
 if st.session_state['page'] == 'home':
     user_id = st.text_input('Enter your ID:', key="user_id_input")
     if st.button('Login', key='login_button'):
+        st.session_state['login_attempted'] = True
         if user_id in unique_user_ids:
-            st.session_state['user_id'] = user_id
             st.session_state['page'] = 'recommendation'
         else:
             st.error('ID doesn\'t exist. Please try again.')
@@ -45,3 +45,7 @@ if st.session_state['page'] == 'recommendation':
                     st.write(song)
             else:
                 st.warning('Please select at least one song.')
+
+# Réinitialisation de l'indicateur de tentative de connexion après affichage du message d'erreur
+if st.session_state['login_attempted'] and st.session_state['page'] == 'home':
+    st.session_state['login_attempted'] = False
