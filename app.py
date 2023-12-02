@@ -10,23 +10,25 @@ unique_user_ids = data['user'].unique()
 # Exemple de liste de chansons
 songs_list = ['Song 1', 'Song 2', 'Song 3', 'Song 4', 'Song 5']
 
+# Initialisation des états de session pour les boutons
+if 'login_clicked' not in st.session_state:
+    st.session_state['login_clicked'] = False
+if 'back_clicked' not in st.session_state:
+    st.session_state['back_clicked'] = False
+if 'page' not in st.session_state:
+    st.session_state['page'] = 'home'
+
 # Fonction pour générer des recommandations
 def generate_recommendations(selected_songs):
     return [song for song in songs_list if song not in selected_songs][:3]
-
-# Initialisation de l'état de la session
-if 'page' not in st.session_state:
-    st.session_state['page'] = 'home'
-if 'user_id' not in st.session_state:
-    st.session_state['user_id'] = ''
 
 # Page d'accueil
 st.title('Welcome to the Music Recommendation Engine')
 if st.session_state['page'] == 'home':
     user_id = st.text_input('Enter your ID:', key="user_id_input")
     if st.button('Login', key='login_button'):
+        st.session_state['login_clicked'] = True
         if user_id in unique_user_ids:
-            st.session_state['user_id'] = user_id
             st.session_state['page'] = 'recommendation'
         else:
             st.error('ID doesn\'t exist. Please try again.')
@@ -34,6 +36,7 @@ if st.session_state['page'] == 'home':
 # Page de recommandation
 elif st.session_state['page'] == 'recommendation':
     if st.button('Back to Home', key='back_home_button'):
+        st.session_state['back_clicked'] = True
         st.session_state['page'] = 'home'
     else:
         selected_songs = st.multiselect('Select songs you like:', songs_list, key="selected_songs_multiselect")
@@ -45,3 +48,9 @@ elif st.session_state['page'] == 'recommendation':
                     st.write(song)
             else:
                 st.warning('Please select at least one song.')
+
+# Réinitialisation des états de clic après traitement
+if st.session_state['login_clicked']:
+    st.session_state['login_clicked'] = False
+if st.session_state['back_clicked']:
+    st.session_state['back_clicked'] = False
