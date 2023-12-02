@@ -17,6 +17,7 @@ def generate_recommendations(selected_songs):
 # Fonction pour afficher la page d'accueil
 def show_home_page():
     st.title('Welcome to the Music Recommendation Engine')
+    st.write(f"Welcome user {st.session_state['user_id']}.")
     user_id = st.text_input('Enter your ID:', key="user_id_input")
     if st.button('Login', key='login_button'):
         if user_id in unique_user_ids:
