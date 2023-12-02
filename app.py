@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-# Charger le dataset (assurez-vous que le chemin est correct)
+# Charger le dataset
 data = pd.read_csv('song_dataset.csv')
 
 # Extraire les IDs uniques des utilisateurs
@@ -21,12 +21,17 @@ def show_home_page():
     if st.button('Login', key='login_button'):
         if user_id in unique_user_ids:
             st.session_state['page'] = 'recommendation'
+            st.session_state['user_id'] = user_id  # Stocker l'ID de l'utilisateur dans l'état de la session
         else:
             st.error('ID doesn\'t exist. Please try again.')
 
 # Fonction pour afficher la page de recommandation
 def show_recommendation_page():
     st.title('Music Recommendation Engine')
+
+    # Afficher le message de bienvenue avec l'ID de l'utilisateur
+    st.write(f"Welcome user {st.session_state.get('user_id', '')}.")
+
     if st.button('Back to Home', key='back_home_button'):
         st.session_state['page'] = 'home'
     selected_songs = st.multiselect('Select songs you like:', songs_list, key="selected_songs_multiselect")
@@ -42,6 +47,8 @@ def show_recommendation_page():
 # Initialisation de l'état de la session
 if 'page' not in st.session_state:
     st.session_state['page'] = 'home'
+if 'user_id' not in st.session_state:
+    st.session_state['user_id'] = ''
 
 # Affichage des pages en fonction de l'état
 if st.session_state['page'] == 'home':
