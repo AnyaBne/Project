@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-# Charger le dataset (assurez-vous que le chemin est correct)
+# Charger le dataset
 data = pd.read_csv('song_dataset.csv')
 
 # Extraire les IDs uniques des utilisateurs
@@ -14,39 +14,29 @@ songs_list = ['Song 1', 'Song 2', 'Song 3', 'Song 4', 'Song 5']
 def generate_recommendations(selected_songs):
     return [song for song in songs_list if song not in selected_songs][:3]
 
-# Page d'accueil
-def show_home_page():
-    st.title('Welcome to the Music Recommendation Engine')
-    user_id = st.text_input('Enter your ID:', key="user_id_input")
-    login_button_clicked = st.button('Login', key='login_button')
-    return login_button_clicked, user_id
-
-# Page de recommandation
-def show_recommendation_page():
-    st.title('Music Recommendation Engine')
-    back_button_clicked = st.button('Back to Home', key='back_home_button')
-    selected_songs = st.multiselect('Select songs you like:', songs_list, key="selected_songs_multiselect")
-    recommend_button_clicked = st.button('Recommend Songs', key='recommend_button')
-    return back_button_clicked, selected_songs, recommend_button_clicked
-
-# Initialisation de l'état de la session
+# Initialisation des variables d'état
 if 'page' not in st.session_state:
     st.session_state['page'] = 'home'
+if 'user_id' not in st.session_state:
+    st.session_state['user_id'] = ''
 
-# Logique de navigation
-if st.session_state['page'] == 'home':
-    login_button_clicked, user_id = show_home_page()
-    if login_button_clicked:
-        if user_id in unique_user_ids:
+# Fonction pour afficher la page d'accueil
+def show_home_page():
+    st.title('Welcome to the Music Recommendation Engine')
+    st.session_state['user_id'] = st.text_input('Enter your ID:', key="user_id_input")
+    if st.button('Login', key='login_button'):
+        if st.session_state['user_id'] in unique_user_ids:
             st.session_state['page'] = 'recommendation'
         else:
             st.error('ID doesn\'t exist. Please try again.')
 
-elif st.session_state['page'] == 'recommendation':
-    back_button_clicked, selected_songs, recommend_button_clicked = show_recommendation_page()
-    if back_button_clicked:
+# Fonction pour afficher la page de recommandation
+def show_recommendation_page():
+    st.title('Music Recommendation Engine')
+    if st.button('Back to Home', key='back_home_button'):
         st.session_state['page'] = 'home'
-    elif recommend_button_clicked:
+    selected_songs = st.multiselect('Select songs you like:', songs_list, key="selected_songs_multiselect")
+    if st.button('Recommend Songs', key='recommend_button'):
         if selected_songs:
             recommendations = generate_recommendations(selected_songs)
             st.subheader('Recommended Songs for you:')
@@ -54,3 +44,9 @@ elif st.session_state['page'] == 'recommendation':
                 st.write(song)
         else:
             st.warning('Please select at least one song.')
+
+# Affichage des pages en fonction de l'état
+if st.session_state['page'] == 'home':
+    show_home_page()
+elif st.session_state['page'] == 'recommendation':
+    show_recommendation_page()
