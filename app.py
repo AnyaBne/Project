@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-import requests
 import joblib
+import requests
 from io import BytesIO
 
 # Charger le dataset
