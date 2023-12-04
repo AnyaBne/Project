@@ -1,12 +1,23 @@
 import streamlit as st
 import pandas as pd
+import requests
 import joblib
+from io import BytesIO
 
 # Charger le dataset
 data = pd.read_csv('song_dataset.csv')
 
-# Charger le modèle entraîné (remplacer par le chemin correct du modèle sauvegardé)
-model = joblib.load('recommender_model.pkl')
+@st.cache
+def load_model_from_gdrive(url):
+    response = requests.get(url)
+    model_stream = BytesIO(response.content)
+    model = joblib.load(model_stream)
+    return model
+
+# Remplacez par votre lien de téléchargement direct
+model_url = "https://drive.google.com/file/d/1eyXrYRk2PGi8qIeDeTzYEvXvy2iZ3kYe/view?usp=drive_link"  
+model = load_model_from_gdrive(model_url)
+
 
 # Extraire les IDs uniques des utilisateurs
 unique_user_ids = data['user'].unique()
