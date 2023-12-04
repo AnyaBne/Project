@@ -18,7 +18,7 @@ def load_model_from_gdrive(url):
     return model
 
 # Remplacez par votre lien de téléchargement direct
-model_url = https://drive.google.com/uc?export=download&id=1eyXrYRk2PGi8qIeDeTzYEvXvy2iZ3kYe"  
+model_url = "https://drive.google.com/uc?export=download&id=1eyXrYRk2PGi8qIeDeTzYEvXvy2iZ3kYe"  
 model = load_model_from_gdrive(model_url)
 
 # Extraire les IDs uniques des utilisateurs
