@@ -1,18 +1,37 @@
 import streamlit as st
 import pandas as pd
+import joblib
 
 # Charger le dataset
 data = pd.read_csv('song_dataset.csv')
 
+# Charger le modèle entraîné (remplacer par le chemin correct du modèle sauvegardé)
+model = joblib.load('recommender_model.pkl')
+
 # Extraire les IDs uniques des utilisateurs
 unique_user_ids = data['user'].unique()
 
-# Exemple de liste de chansons
-songs_list = ['Song 1', 'Song 2', 'Song 3', 'Song 4', 'Song 5']
-
-# Fonction pour générer des recommandations
-def generate_recommendations(selected_songs):
-    return [song for song in songs_list if song not in selected_songs][:3]
+# Fonction pour obtenir des recommandations basées sur le modèle
+def get_recommendations(user_id, n=10):
+    # Récupération des chansons écoutées par l'utilisateur
+    listened_songs = df[df['user'] == user_id]['song'].unique()
+    
+    # Création d'une liste de toutes les chansons que l'utilisateur n'a pas encore écoutées
+    all_songs = df[~df['song'].isin(listened_songs)]['song'].unique()
+    
+    # Prédiction des notes pour les chansons non écoutées
+    predictions = []
+    for song in all_songs:
+        predictions.append((song, algo.predict(user_id, song).est))
+    
+    # Tri des chansons en fonction des notes prédites et sélection des 'n' meilleures
+    predictions.sort(key=lambda x: x[1], reverse=True)
+    
+    # Obtention des titres de chansons
+    recommended_song_ids = [song for song, _ in predictions[:n]]
+    recommended_songs = df[df['song'].isin(recommended_song_ids)][['song', 'title']].drop_duplicates().head(n)
+    
+    return recommended_songs
 
 # Fonction pour afficher la page d'accueil
 def show_home_page():
@@ -26,23 +45,20 @@ def show_home_page():
             st.error('ID doesn\'t exist. Please try again.')
 
 # Fonction pour afficher la page de recommandation
-def show_recommendation_page():
+def show_recommendation_page(model):
     st.title('Music Recommendation Engine')
-
-    # Afficher le message de bienvenue avec l'ID de l'utilisateur
     st.write(f"Welcome user {st.session_state.get('user_id', '')}.")
+
+    # Affichage des chansons recommandées
+    if 'user_id' in st.session_state and st.session_state['user_id']:
+        user_id = st.session_state['user_id']
+        recommended_songs = get_recommendations(user_id, model)
+        st.subheader('Recommended Songs for you:')
+        for song in recommended_songs:
+            st.write(song)
 
     if st.button('Back to Home', key='back_home_button'):
         st.session_state['page'] = 'home'
-    selected_songs = st.multiselect('Select songs you like:', songs_list, key="selected_songs_multiselect")
-    if st.button('Recommend Songs', key='recommend_button'):
-        if selected_songs:
-            recommendations = generate_recommendations(selected_songs)
-            st.subheader('Recommended Songs for you:')
-            for song in recommendations:
-                st.write(song)
-        else:
-            st.warning('Please select at least one song.')
 
 # Initialisation de l'état de la session
 if 'page' not in st.session_state:
@@ -54,4 +70,4 @@ if 'user_id' not in st.session_state:
 if st.session_state['page'] == 'home':
     show_home_page()
 elif st.session_state['page'] == 'recommendation':
-    show_recommendation_page()
+    show_recommendation_page(model)
